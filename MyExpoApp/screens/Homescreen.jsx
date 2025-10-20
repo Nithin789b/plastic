@@ -8,15 +8,18 @@ import {
   Image 
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native'; 
 
-const HomeScreenContent = ({ navigation }) => {  // Add navigation prop
+const HomeScreenContent = () => {
+  const navigation = useNavigation(); // navigation object
+
   const menuItems = [
     {
       id: 1,
       title: 'Knowledge Blog',
       image: require('../assets/book.png'),
       backgroundColor: '#F5E6D3',
-      screen: 'KnowledgeBlog',  // Add this
+      navigateTo:'KnowledgeBlogScreen'
     },
     {
       id: 2,
@@ -30,7 +33,7 @@ const HomeScreenContent = ({ navigation }) => {  // Add navigation prop
       title: 'Photo Upload',
       image: require('../assets/photo-upload.png'),
       backgroundColor: '#F5E6D3',
-      screen: 'PhotoUpload',  // Add this
+      navigateTo: 'ReportIssue', // navigate on click
     },
     {
       id: 4,
@@ -74,7 +77,13 @@ const HomeScreenContent = ({ navigation }) => {  // Add navigation prop
           <TouchableOpacity 
             key={item.id} 
             style={[styles.menuCard, { backgroundColor: item.backgroundColor }]}
-            onPress={() => handleMenuPress(item)}
+            onPress={() => {
+              if (item.navigateTo) {
+                navigation.navigate(item.navigateTo); // navigate to screen
+              } else {
+                console.log(`${item.title} pressed`);
+              }
+            }}
           >
             <View style={styles.imageContainer}>
               <Image source={item.image} style={styles.image} resizeMode="contain" />
@@ -160,6 +169,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#1C1C1E',
+    textAlign: 'center',
   },
 });
 

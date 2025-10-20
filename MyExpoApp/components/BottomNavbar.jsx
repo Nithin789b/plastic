@@ -3,23 +3,15 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-const BottomNavBar = ({ activeTab: propActiveTab }) => {
-  let navigation = null;
-  let route = null;
-  try {
-    navigation = useNavigation();
-    route = useRoute();
-  } catch (e) {
-    navigation = null;
-    route = null;
-  }
-
-  const activeTab = propActiveTab ?? route?.name;
+const BottomNavBar = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const activeTab = route.name;
 
   const tabs = [
     { name: 'Home', icon: 'home', iconOutline: 'home-outline', screen: 'Home' },
     { name: 'Announce', icon: 'megaphone', iconOutline: 'megaphone-outline', screen: 'Announce' },
-    { name: 'Upload', icon: 'image', iconOutline: 'image-outline', screen: 'Upload' },
+    { name: 'Upload', icon: 'image', iconOutline: 'image-outline', screen: 'ReportIssue' },
     { name: 'Alerts', icon: 'notifications', iconOutline: 'notifications-outline', screen: 'Alerts' },
     { name: 'Profile', icon: 'person-circle', iconOutline: 'person-circle-outline', screen: 'Profile' }
   ];
