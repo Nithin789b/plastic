@@ -1,30 +1,35 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-const BottomNavBar = ({ activeTab = 'Home' }) => {
+const BottomNavBar = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const activeTab = route.name; // current screen name
+
   const tabs = [
-    { name: 'Home', icon: 'home', iconOutline: 'home-outline' },
-    { name: 'Announce', icon: 'megaphone', iconOutline: 'megaphone-outline' },
-    { name: 'Upload', icon: 'image', iconOutline: 'image-outline' },
-    { name: 'Alerts', icon: 'notifications', iconOutline: 'notifications-outline' },
-    { name: 'Profile', icon: 'person-circle', iconOutline: 'person-circle-outline' }
+    { name: 'Home', icon: 'home', iconOutline: 'home-outline', screen: 'Home' },
+    { name: 'Announce', icon: 'megaphone', iconOutline: 'megaphone-outline', screen: 'Announce' },
+    { name: 'Upload', icon: 'image', iconOutline: 'image-outline', screen: 'Upload' },
+    { name: 'Alerts', icon: 'notifications', iconOutline: 'notifications-outline', screen: 'Alerts' },
+    { name: 'Profile', icon: 'person-circle', iconOutline: 'person-circle-outline', screen: 'Profile' }
   ];
 
   return (
     <View style={styles.container}>
       {tabs.map((tab) => {
-        const isActive = activeTab === tab.name;
+        const isActive = activeTab === tab.screen;
         return (
-          <TouchableOpacity 
-            key={tab.name} 
+          <TouchableOpacity
+            key={tab.name}
             style={styles.tabItem}
-            onPress={() => console.log(`${tab.name} pressed`)}
+            onPress={() => navigation.navigate(tab.screen)}
           >
-            <Ionicons 
-              name={isActive ? tab.icon : tab.iconOutline} 
-              size={26} 
-              color={isActive ? '#00A8E8' : '#8E8E93'} 
+            <Ionicons
+              name={isActive ? tab.icon : tab.iconOutline}
+              size={26}
+              color={isActive ? '#00A8E8' : '#8E8E93'}
             />
             <Text style={[styles.tabText, isActive && styles.activeTabText]}>
               {tab.name}
