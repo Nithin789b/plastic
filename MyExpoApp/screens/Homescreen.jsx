@@ -9,33 +9,45 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const HomeScreenContent = () => {
+const HomeScreenContent = ({ navigation }) => {  // Add navigation prop
   const menuItems = [
     {
       id: 1,
       title: 'Knowledge Blog',
       image: require('../assets/book.png'),
       backgroundColor: '#F5E6D3',
+      screen: 'KnowledgeBlog',  // Add this
     },
     {
       id: 2,
       title: 'Quiz',
       image: require('../assets/quiz.png'),
       backgroundColor: '#E8DCC4',
+      screen: 'Quiz',  // Add this
     },
     {
       id: 3,
       title: 'Photo Upload',
       image: require('../assets/photo-upload.png'),
       backgroundColor: '#F5E6D3',
+      screen: 'PhotoUpload',  // Add this
     },
     {
       id: 4,
       title: 'Volunteer Registration',
       image: require('../assets/volunteer.png'),
       backgroundColor: '#E8DCC4',
+      screen: 'Volunteer',  // Add this
     },
   ];
+
+  const handleMenuPress = (item) => {
+    if (item.screen === 'KnowledgeBlog') {
+      navigation.navigate('KnowledgeBlog');
+    } else {
+      console.log(`${item.title} pressed - Coming soon!`);
+    }
+  };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -62,7 +74,7 @@ const HomeScreenContent = () => {
           <TouchableOpacity 
             key={item.id} 
             style={[styles.menuCard, { backgroundColor: item.backgroundColor }]}
-            onPress={() => console.log(`${item.title} pressed`)}
+            onPress={() => handleMenuPress(item)}
           >
             <View style={styles.imageContainer}>
               <Image source={item.image} style={styles.image} resizeMode="contain" />
@@ -117,7 +129,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingHorizontal: 12,
-    paddingBottom: 100, // space for bottom navbar
+    paddingBottom: 100,
   },
   menuCard: {
     width: '47%',
