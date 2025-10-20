@@ -6,12 +6,12 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 const BottomNavBar = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const activeTab = route.name; // current screen name
+  const activeTab = route.name;
 
   const tabs = [
     { name: 'Home', icon: 'home', iconOutline: 'home-outline', screen: 'Home' },
     { name: 'Announce', icon: 'megaphone', iconOutline: 'megaphone-outline', screen: 'Announce' },
-    { name: 'Upload', icon: 'image', iconOutline: 'image-outline', screen: 'Upload' },
+    { name: 'Upload', icon: 'image', iconOutline: 'image-outline', screen: 'ReportIssue' },
     { name: 'Alerts', icon: 'notifications', iconOutline: 'notifications-outline', screen: 'Alerts' },
     { name: 'Profile', icon: 'person-circle', iconOutline: 'person-circle-outline', screen: 'Profile' }
   ];
