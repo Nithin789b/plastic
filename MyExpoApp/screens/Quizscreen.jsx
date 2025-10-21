@@ -1,7 +1,8 @@
+// PlasticAwarenessPuzzleRN.js
 import React, { useState } from 'react';
-import { Waves, Users, Droplets, RotateCcw, Trophy, Sparkles, CheckCircle, Award } from 'lucide-react';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 
-const PlasticAwarenessPuzzle = () => {
+const PlasticAwarenessPuzzleRN = () => {
   const allPieces = [
     { id: 1, emoji: '🧑', category: 'Human Impact', message: 'Humans consume microplastics daily' },
     { id: 2, emoji: '⚠️', category: 'Human Impact', message: 'Microplastics found in our blood' },
@@ -14,91 +15,82 @@ const PlasticAwarenessPuzzle = () => {
   ];
 
   const categories = [
-    { name: 'Human Impact', icon: Users, color: 'bg-red-100 border-red-300', ids: [1, 2] },
-    { name: 'Marine Life', icon: Waves, color: 'bg-blue-100 border-blue-300', ids: [3, 4] },
-    { name: 'Land Animals', icon: Droplets, color: 'bg-green-100 border-green-300', ids: [5, 6] },
-    { name: 'Water Systems', icon: Droplets, color: 'bg-cyan-100 border-cyan-300', ids: [7, 8] }
+    { name: 'Human Impact', short: 'Human', ids: [1, 2] },
+    { name: 'Marine Life', short: 'Marine', ids: [3, 4] },
+    { name: 'Land Animals', short: 'Land', ids: [5, 6] },
+    { name: 'Water Systems', short: 'Water', ids: [7, 8] }
   ];
 
-  const [draggedPiece, setDraggedPiece] = useState(null);
+  // grid has 8 slots (2 slots per category)
   const [grid, setGrid] = useState(Array(8).fill(null));
-  const [availablePieces, setAvailablePieces] = useState(() => 
+  const [availablePieces, setAvailablePieces] = useState(() =>
     [...allPieces].sort(() => Math.random() - 0.5)
   );
+  const [selectedPiece, setSelectedPiece] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [completedCategories, setCompletedCategories] = useState([]);
   const [showCelebration, setShowCelebration] = useState(false);
 
-  const handleDragStart = (e, piece, fromGrid = false, gridIndex = null) => {
-    setDraggedPiece({ piece, fromGrid, gridIndex });
-    e.dataTransfer.effectAllowed = 'move';
+  // Select a piece from available (or from grid to move)
+  const selectAvailablePiece = (piece) => {
+    if (submitted) return;
+    setSelectedPiece({ piece, from: 'available' });
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
+  const selectPlacedPiece = (index) => {
+    if (submitted) return;
+    const piece = grid[index];
+    if (!piece) return;
+    setSelectedPiece({ piece, from: 'grid', gridIndex: index });
   };
 
-  const handleDropOnGrid = (e, targetIndex) => {
-    e.preventDefault();
-    if (!draggedPiece || submitted) return;
+  // Place selected on a grid index
+  const placeOnGrid = (index) => {
+    if (!selectedPiece || submitted) return;
 
     const newGrid = [...grid];
     const newAvailable = [...availablePieces];
 
-    if (draggedPiece.fromGrid) {
-      newGrid[targetIndex] = newGrid[draggedPiece.gridIndex];
-      newGrid[draggedPiece.gridIndex] = null;
-    } else {
-      if (newGrid[targetIndex]) {
-        newAvailable.push(newGrid[targetIndex]);
+    if (selectedPiece.from === 'available') {
+      // If target slot already has a piece, move it back to available
+      if (newGrid[index]) {
+        newAvailable.push(newGrid[index]);
       }
-      newGrid[targetIndex] = draggedPiece.piece;
-      const pieceIndex = newAvailable.findIndex(p => p.id === draggedPiece.piece.id);
-      newAvailable.splice(pieceIndex, 1);
+      newGrid[index] = selectedPiece.piece;
+      // remove placed piece from available
+      const idx = newAvailable.findIndex((p) => p.id === selectedPiece.piece.id);
+      if (idx > -1) newAvailable.splice(idx, 1);
+    } else if (selectedPiece.from === 'grid') {
+      // swap or move within grid
+      const fromIdx = selectedPiece.gridIndex;
+      if (fromIdx === index) {
+        // tapping same slot -> deselect
+        setSelectedPiece(null);
+        return;
+      }
+      // if target has piece, swap them
+      const temp = newGrid[index];
+      newGrid[index] = newGrid[fromIdx];
+      newGrid[fromIdx] = temp || null;
     }
 
     setGrid(newGrid);
     setAvailablePieces(newAvailable);
-    setDraggedPiece(null);
+    setSelectedPiece(null);
   };
 
-  const handleDropOnAvailable = (e) => {
-    e.preventDefault();
-    if (!draggedPiece || !draggedPiece.fromGrid || submitted) return;
-
+  // Return a placed piece back to available by tapping an 'empty area' or long-press on piece (we provide a button)
+  const removeFromGridToAvailable = (index) => {
+    if (submitted) return;
     const newGrid = [...grid];
     const newAvailable = [...availablePieces];
-
-    newAvailable.push(newGrid[draggedPiece.gridIndex]);
-    newGrid[draggedPiece.gridIndex] = null;
-
-    setGrid(newGrid);
-    setAvailablePieces(newAvailable);
-    setDraggedPiece(null);
-  };
-
-  const handleSubmit = () => {
-    setSubmitted(true);
-    const completed = [];
-    
-    categories.forEach((cat, catIndex) => {
-      const startIdx = catIndex * 2;
-      const piece1 = grid[startIdx];
-      const piece2 = grid[startIdx + 1];
-      
-      if (piece1 && piece2 && 
-          cat.ids.includes(piece1.id) && 
-          cat.ids.includes(piece2.id)) {
-        completed.push(cat.name);
-      }
-    });
-
-    setCompletedCategories(completed);
-    
-    setTimeout(() => {
-      setShowCelebration(true);
-    }, 500);
+    if (newGrid[index]) {
+      newAvailable.push(newGrid[index]);
+      newGrid[index] = null;
+      setGrid(newGrid);
+      setAvailablePieces(newAvailable);
+      setSelectedPiece(null);
+    }
   };
 
   const resetPuzzle = () => {
@@ -107,236 +99,319 @@ const PlasticAwarenessPuzzle = () => {
     setCompletedCategories([]);
     setShowCelebration(false);
     setSubmitted(false);
+    setSelectedPiece(null);
+  };
+
+  const handleSubmit = () => {
+    const completed = [];
+
+    categories.forEach((cat, catIndex) => {
+      const startIdx = catIndex * 2;
+      const piece1 = grid[startIdx];
+      const piece2 = grid[startIdx + 1];
+
+      if (
+        piece1 &&
+        piece2 &&
+        cat.ids.includes(piece1.id) &&
+        cat.ids.includes(piece2.id)
+      ) {
+        completed.push(cat.name);
+      }
+    });
+
+    setSubmitted(true);
+    setCompletedCategories(completed);
+    setTimeout(() => setShowCelebration(true), 500);
   };
 
   const isCategoryComplete = (catIndex) => {
     if (!submitted) return false;
-    const category = categories[catIndex];
-    return completedCategories.includes(category.name);
+    return completedCategories.includes(categories[catIndex].name);
   };
 
   const isCategoryWrong = (catIndex) => {
     if (!submitted) return false;
-    const category = categories[catIndex];
     const startIdx = catIndex * 2;
     const piece1 = grid[startIdx];
     const piece2 = grid[startIdx + 1];
-    
-    return piece1 && piece2 && !completedCategories.includes(category.name);
+    return piece1 && piece2 && !completedCategories.includes(categories[catIndex].name);
   };
 
-  const allGridsFilled = grid.every(slot => slot !== null);
+  const allGridsFilled = grid.every((slot) => slot !== null);
 
   return (
-    <div className="min-h-screen bg-white p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 p-3 rounded-2xl shadow-lg">
-              <Waves className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-gray-800">
-              Plastic Awareness Puzzle
-            </h1>
-          </div>
-          <p className="text-lg text-gray-600 mb-4">Drag and match pieces to their correct categories</p>
-          
-          {/* Progress */}
-          <div className="inline-flex items-center gap-2 bg-yellow-50 px-6 py-3 rounded-full border-2 border-yellow-300">
-            <Trophy className="w-5 h-5 text-yellow-600" />
-            <span className="text-lg font-bold text-gray-800">
-              {completedCategories.length} / 4 Categories Complete
-            </span>
-          </div>
-        </div>
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>🌍 Plastic Awareness Puzzle</Text>
+        <Text style={styles.subtitle}>Tap a piece, then tap a slot to place it</Text>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Available Pieces */}
-          <div className="lg:col-span-1">
-            <div className="bg-gray-50 rounded-3xl shadow-md p-6 border-2 border-gray-200 sticky top-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-yellow-500" />
-                  Pieces
-                </h2>
-                <span className="text-sky-500 font-semibold">{availablePieces.length}</span>
-              </div>
-              
-              <div
-                onDragOver={handleDragOver}
-                onDrop={handleDropOnAvailable}
-                className="grid grid-cols-2 gap-3 min-h-[300px] p-4 bg-white rounded-2xl border-2 border-dashed border-gray-300"
-              >
-                {availablePieces.map((piece) => (
-                  <div
-                    key={`available-${piece.id}`}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, piece, false)}
-                    className="bg-gradient-to-br from-sky-100 to-sky-200 aspect-square rounded-2xl cursor-move hover:scale-105 transition-all shadow-md flex items-center justify-center text-5xl border-3 border-sky-300"
-                  >
-                    {piece.emoji}
-                  </div>
-                ))}
-              </div>
+        <View style={styles.progress}>
+          <Text style={styles.trophy}>🏆</Text>
+          <Text style={styles.progressText}>{completedCategories.length} / 4 Categories Complete</Text>
+        </View>
+      </View>
 
-              <button
-                onClick={resetPuzzle}
-                className="w-full mt-4 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all border-2 border-gray-300"
-              >
-                <RotateCcw className="w-4 h-4" />
-                Reset
-              </button>
+      <View style={styles.main}>
+        {/* Left: Available pieces */}
+        <View style={styles.availableBox}>
+          <View style={styles.availableHeader}>
+            <Text style={styles.availableTitle}>✨ Pieces</Text>
+            <Text style={styles.count}>{availablePieces.length}</Text>
+          </View>
 
-              {allGridsFilled && !submitted && (
-                <button
-                  onClick={handleSubmit}
-                  className="w-full mt-3 bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md animate-bounce"
+          <View style={styles.availableGrid}>
+            {availablePieces.map((piece) => {
+              const isSelected = selectedPiece && selectedPiece.piece.id === piece.id && selectedPiece.from === 'available';
+              return (
+                <TouchableOpacity
+                  key={piece.id}
+                  style={[styles.pieceTile, isSelected && styles.selectedPiece]}
+                  onPress={() => selectAvailablePiece(piece)}
                 >
-                  <CheckCircle className="w-5 h-5" />
-                  Submit Answer
-                </button>
-              )}
+                  <Text style={styles.pieceEmoji}>{piece.emoji}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
-              <div className="mt-2 text-xs text-gray-500 text-center">
-                Filled: {grid.filter(slot => slot !== null).length} / 8
-              </div>
-            </div>
-          </div>
+          <TouchableOpacity style={styles.button} onPress={resetPuzzle}>
+            <Text style={styles.buttonText}>🔁 Reset</Text>
+          </TouchableOpacity>
 
-          {/* Categories Grid */}
-          <div className="lg:col-span-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {categories.map((category, catIndex) => {
-                const Icon = category.icon;
-                const isComplete = isCategoryComplete(catIndex);
-                const startIdx = catIndex * 2;
+          {allGridsFilled && !submitted && (
+            <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={handleSubmit}>
+              <Text style={[styles.buttonText, styles.submitButtonText]}>✅ Submit Answer</Text>
+            </TouchableOpacity>
+          )}
 
-                return (
-                  <div
-                    key={category.name}
-                    className={`rounded-3xl shadow-md p-6 border-2 transition-all ${
-                      isComplete 
-                        ? 'bg-emerald-50 border-emerald-400' 
-                        : isCategoryWrong(catIndex)
-                        ? 'bg-red-50 border-red-400'
-                        : 'bg-gray-50 border-gray-200'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <div className={`p-2 rounded-xl ${
-                          isComplete ? 'bg-emerald-200' : 'bg-gray-200'
-                        }`}>
-                          <Icon className={`w-5 h-5 ${
-                            isComplete ? 'text-emerald-700' : 'text-gray-600'
-                          }`} />
-                        </div>
-                        <h3 className="text-lg font-bold text-gray-800">{category.name}</h3>
-                      </div>
-                      {isComplete && (
-                        <CheckCircle className="w-6 h-6 text-emerald-600" />
-                      )}
-                      {isCategoryWrong(catIndex) && (
-                        <div className="flex items-center gap-1 text-red-600 text-sm font-semibold">
-                          ✗ Wrong
-                        </div>
-                      )}
-                    </div>
+          <Text style={styles.smallText}>Filled: {grid.filter(s => s !== null).length} / 8</Text>
+        </View>
 
-                    {/* 2 Slots */}
-                    <div className="grid grid-cols-2 gap-3">
-                      {[0, 1].map((offset) => {
-                        const index = startIdx + offset;
-                        const piece = grid[index];
-                        
-                        return (
-                          <div
-                            key={`grid-${index}`}
-                            onDragOver={handleDragOver}
-                            onDrop={(e) => handleDropOnGrid(e, index)}
-                            className={`aspect-square rounded-2xl border-4 flex items-center justify-center text-6xl transition-all ${
-                              piece
-                                ? `${category.color} shadow-lg`
-                                : 'bg-white border-dashed border-gray-300 hover:border-sky-400 hover:bg-sky-50'
-                            }`}
-                          >
-                            {piece ? (
-                              <div
-                                draggable
-                                onDragStart={(e) => handleDragStart(e, piece, true, index)}
-                                className="cursor-move w-full h-full flex items-center justify-center"
-                                title={piece.message}
-                              >
-                                {piece.emoji}
-                              </div>
-                            ) : (
-                              <div className="text-gray-300 text-3xl font-bold">{offset + 1}</div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
+        {/* Right: Categories and grid */}
+        <View style={styles.categoriesBox}>
+          {categories.map((category, catIndex) => {
+            const startIdx = catIndex * 2;
+            const isComplete = isCategoryComplete(catIndex);
+            const wrong = isCategoryWrong(catIndex);
+            return (
+              <View
+                key={category.name}
+                style={[
+                  styles.categoryCard,
+                  isComplete ? styles.cardComplete : wrong ? styles.cardWrong : styles.cardNeutral
+                ]}
+              >
+                <View style={styles.categoryHeader}>
+                  <Text style={styles.categoryIcon}>🌿</Text>
+                  <Text style={styles.categoryTitle}>{category.name}</Text>
+                  {isComplete && <Text style={styles.check}>✅</Text>}
+                  {wrong && <Text style={styles.wrong}>✗ Wrong</Text>}
+                </View>
 
-                    {isComplete && grid[startIdx] && (
-                      <div className="mt-4 p-3 bg-white rounded-xl border-2 border-emerald-300">
-                        <p className="text-sm text-gray-700 text-center">
-                          ✓ {grid[startIdx].message}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                <View style={styles.slotRow}>
+                  {[0, 1].map((offset) => {
+                    const index = startIdx + offset;
+                    const piece = grid[index];
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        style={[styles.slot, piece ? styles.slotFilled : styles.slotEmpty]}
+                        onPress={() => {
+                          if (selectedPiece) {
+                            // try to place selected on this slot
+                            placeOnGrid(index);
+                          } else if (piece) {
+                            // select placed piece to move
+                            selectPlacedPiece(index);
+                          }
+                        }}
+                        onLongPress={() => removeFromGridToAvailable(index)}
+                      >
+                        {piece ? (
+                          <Text style={styles.pieceEmojiLarge} accessibilityLabel={piece.message}>
+                            {piece.emoji}
+                          </Text>
+                        ) : (
+                          <Text style={styles.slotNumber}>{offset + 1}</Text>
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
 
-            {/* Celebration */}
-            {showCelebration && (
-              <div className="mt-6 bg-gradient-to-r from-emerald-100 to-sky-100 rounded-3xl shadow-lg p-8 text-center border-2 border-emerald-400 animate-pulse">
-                <Award className="w-20 h-20 text-yellow-500 mx-auto mb-4" />
-                <h2 className="text-4xl font-bold text-gray-800 mb-3">
-                  {completedCategories.length === 4 ? '🎉 Perfect Score!' : '🌟 Great Effort!'}
-                </h2>
-                <div className="mb-6">
-                  <div className="inline-flex items-center gap-3 bg-white px-8 py-4 rounded-full shadow-md">
-                    <Trophy className="w-8 h-8 text-yellow-500" />
-                    <span className="text-3xl font-bold text-gray-800">
-                      {completedCategories.length} / 4
-                    </span>
-                  </div>
-                </div>
-                <p className="text-xl text-gray-700 mb-2">
-                  {completedCategories.length === 4 
-                    ? 'Amazing! You matched all categories correctly!' 
-                    : `You got ${completedCategories.length} ${completedCategories.length === 1 ? 'category' : 'categories'} right!`}
-                </p>
-                <p className="text-gray-600 mb-6">
-                  Together, we can reduce plastic waste and protect our planet 🌍
-                </p>
-                <button
-                  onClick={resetPuzzle}
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-md inline-flex items-center gap-2"
-                >
-                  <RotateCcw className="w-5 h-5" />
-                  Try Again
-                </button>
-              </div>
-            )}
+                {isComplete && grid[startIdx] && (
+                  <View style={styles.messageBox}>
+                    <Text style={styles.messageText}>✓ {grid[startIdx].message}</Text>
+                  </View>
+                )}
+              </View>
+            );
+          })}
 
-            {!showCelebration && (
-              <div className="mt-6 p-4 bg-yellow-50 rounded-2xl text-center border-2 border-yellow-200">
-                <p className="text-sm text-gray-700">
-                  {allGridsFilled && !submitted 
-                    ? '✨ All pieces placed! Click Submit Answer to check your results'
-                    : '💡 Drag and match both pieces in each category, then submit'}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+          {/* Feedback Area / Celebration */}
+          {showCelebration ? (
+            <View style={styles.celebration}>
+              <Text style={styles.award}>🏅</Text>
+              <Text style={styles.celebrationTitle}>
+                {completedCategories.length === 4 ? '🎉 Perfect Score!' : '🌟 Great Effort!'}
+              </Text>
+              <Text style={styles.celebrationSubtitle}>
+                You got {completedCategories.length} / 4 categories right
+              </Text>
+              <TouchableOpacity style={[styles.button, styles.tryAgain]} onPress={resetPuzzle}>
+                <Text style={styles.buttonText}>🔁 Try Again</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.hintBox}>
+              <Text style={styles.hintText}>
+                {allGridsFilled && !submitted
+                  ? '✨ All pieces placed! Tap Submit Answer to check your results'
+                  : '💡 Tap a piece, then tap a slot to place it. Long-press a placed piece to return it to the pool.'}
+              </Text>
+            </View>
+          )}
+        </View>
+      </View>
+    </ScrollView>
   );
 };
 
-export default PlasticAwarenessPuzzle;
+export default PlasticAwarenessPuzzleRN;
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+    paddingBottom: 40,
+    backgroundColor: '#fff',
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#1f2937',
+    marginBottom: 6,
+  },
+  subtitle: {
+    color: '#6b7280',
+    marginBottom: 8,
+  },
+  progress: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+  },
+  trophy: { fontSize: 18, marginRight: 8 },
+  progressText: { fontWeight: '700', color: '#374151' },
+
+  main: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+
+  availableBox: {
+    width: '38%',
+    padding: 12,
+    borderRadius: 18,
+    backgroundColor: '#f8fafc',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+  availableHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  availableTitle: { fontWeight: '800', color: '#111827' },
+  count: { color: '#0ea5e9', fontWeight: '700' },
+  availableGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    justifyContent: 'center',
+  },
+  pieceTile: {
+    width: 60,
+    height: 60,
+    borderRadius: 12,
+    backgroundColor: '#e6f6ff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 6,
+  },
+  selectedPiece: {
+    borderWidth: 2,
+    borderColor: '#06b6d4',
+    transform: [{ scale: 1.05 }],
+  },
+  pieceEmoji: { fontSize: 28 },
+  button: {
+    marginTop: 10,
+    backgroundColor: '#f3f4f6',
+    paddingVertical: 10,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  buttonText: { fontWeight: '700' },
+  submitButton: { backgroundColor: '#10b981' },
+  submitButtonText: { color: '#fff' },
+  smallText: { textAlign: 'center', color: '#6b7280', marginTop: 6 },
+
+  categoriesBox: {
+    width: '62%',
+    paddingLeft: 12,
+  },
+  categoryCard: {
+    padding: 12,
+    borderRadius: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+  },
+  cardNeutral: { backgroundColor: '#f8fafc', borderColor: '#e5e7eb' },
+  cardComplete: { backgroundColor: '#ecfdf5', borderColor: '#34d399' },
+  cardWrong: { backgroundColor: '#fff1f2', borderColor: '#fca5a5' },
+
+  categoryHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  categoryIcon: { fontSize: 18, marginRight: 8 },
+  categoryTitle: { flex: 1, fontWeight: '800', color: '#111827' },
+  check: { marginLeft: 8 },
+  wrong: { color: '#dc2626', fontWeight: '700' },
+
+  slotRow: { flexDirection: 'row', justifyContent: 'space-between', gap: 8 },
+  slot: {
+    flex: 1,
+    height: 90,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 4,
+  },
+  slotEmpty: { backgroundColor: '#fff', borderWidth: 1, borderStyle: 'dashed', borderColor: '#d1d5db' },
+  slotFilled: { backgroundColor: '#e6fffa', borderWidth: 1, borderColor: '#c7f9ef' },
+
+  slotNumber: { color: '#c7c7c7', fontSize: 18, fontWeight: '800' },
+  pieceEmojiLarge: { fontSize: 36 },
+
+  messageBox: { marginTop: 10, padding: 8, backgroundColor: '#fff', borderRadius: 8, borderWidth: 1, borderColor: '#bbf7d0' },
+  messageText: { color: '#065f46', textAlign: 'center' },
+
+  celebration: {
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#ecfeff',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#bbf7d0',
+    marginTop: 8,
+  },
+  award: { fontSize: 40 },
+  celebrationTitle: { fontSize: 18, fontWeight: '800', marginTop: 8 },
+  celebrationSubtitle: { color: '#374151', marginVertical: 8 },
+  tryAgain: { backgroundColor: '#10b981', marginTop: 8 },
+
+  hintBox: { padding: 10, backgroundColor: '#fffbeb', borderRadius: 12, borderWidth: 1, borderColor: '#fde68a', marginTop: 8 },
+  hintText: { color: '#92400e' },
+});
