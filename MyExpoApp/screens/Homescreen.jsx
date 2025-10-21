@@ -8,46 +8,39 @@ import {
   Image 
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native'; 
 
-const HomeScreenContent = ({ navigation }) => {  // Add navigation prop
+const HomeScreenContent = () => {
+  const navigation = useNavigation(); // navigation object
+
   const menuItems = [
     {
       id: 1,
       title: 'Knowledge Blog',
       image: require('../assets/book.png'),
       backgroundColor: '#F5E6D3',
-      screen: 'KnowledgeBlog',  // Add this
+      navigateTo:'KnowledgeBlogScreen'
     },
     {
       id: 2,
       title: 'Quiz',
       image: require('../assets/quiz.png'),
       backgroundColor: '#E8DCC4',
-      screen: 'Quiz',  // Add this
     },
     {
       id: 3,
       title: 'Photo Upload',
       image: require('../assets/photo-upload.png'),
       backgroundColor: '#F5E6D3',
-      screen: 'PhotoUpload',  // Add this
+      navigateTo: 'ReportIssue', // navigate on click
     },
     {
       id: 4,
       title: 'Volunteer Registration',
       image: require('../assets/volunteer.png'),
       backgroundColor: '#E8DCC4',
-      screen: 'Volunteer',  // Add this
     },
   ];
-
-  const handleMenuPress = (item) => {
-    if (item.screen === 'KnowledgeBlog') {
-      navigation.navigate('KnowledgeBlog');
-    } else {
-      console.log(`${item.title} pressed - Coming soon!`);
-    }
-  };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -74,7 +67,13 @@ const HomeScreenContent = ({ navigation }) => {  // Add navigation prop
           <TouchableOpacity 
             key={item.id} 
             style={[styles.menuCard, { backgroundColor: item.backgroundColor }]}
-            onPress={() => handleMenuPress(item)}
+            onPress={() => {
+              if (item.navigateTo) {
+                navigation.navigate(item.navigateTo); // navigate to screen
+              } else {
+                console.log('${item.title} pressed');
+              }
+            }}
           >
             <View style={styles.imageContainer}>
               <Image source={item.image} style={styles.image} resizeMode="contain" />
@@ -129,7 +128,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingHorizontal: 12,
-    paddingBottom: 100,
+    paddingBottom: 100, // space for bottom navbar
   },
   menuCard: {
     width: '47%',
@@ -160,6 +159,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#1C1C1E',
+    textAlign: 'center',
   },
 });
 

@@ -16,7 +16,6 @@ const KnowledgeBlogScreen = () => {
   const blogCategories = [
     {
       id: 1,
-      title: 'Marine Life',
       icon: '🐋',
       color: '#4A90E2',
       image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800',
@@ -117,14 +116,7 @@ const KnowledgeBlogScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => console.log('Back pressed')}>
-          <Ionicons name="arrow-back" size={28} color="#1C1C1E" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Knowledge Blog</Text>
-        <View style={{ width: 28 }} />
-      </View>
+     
 
       {/* Hero Section */}
       <View style={styles.heroSection}>
