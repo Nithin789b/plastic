@@ -42,7 +42,7 @@ const HomeScreenContent = () => {
       navigateTo: 'selectActivity', // navigate on click
     },
   ];
-
+ 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header */}
