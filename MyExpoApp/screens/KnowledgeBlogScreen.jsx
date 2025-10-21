@@ -16,7 +16,6 @@ const KnowledgeBlogScreen = () => {
   const blogCategories = [
     {
       id: 1,
-      title: 'Marine Life',
       icon: '🐋',
       color: '#4A90E2',
       image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800',
