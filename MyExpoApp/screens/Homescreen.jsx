@@ -26,7 +26,6 @@ const HomeScreenContent = () => {
       title: 'Quiz',
       image: require('../assets/quiz.png'),
       backgroundColor: '#E8DCC4',
-      screen: 'Quiz',  // Add this
     },
     {
       id: 3,
@@ -40,17 +39,8 @@ const HomeScreenContent = () => {
       title: 'Volunteer Registration',
       image: require('../assets/volunteer.png'),
       backgroundColor: '#E8DCC4',
-      screen: 'Volunteer',  // Add this
     },
   ];
-
-  const handleMenuPress = (item) => {
-    if (item.screen === 'KnowledgeBlog') {
-      navigation.navigate('KnowledgeBlog');
-    } else {
-      console.log(`${item.title} pressed - Coming soon!`);
-    }
-  };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -81,7 +71,7 @@ const HomeScreenContent = () => {
               if (item.navigateTo) {
                 navigation.navigate(item.navigateTo); // navigate to screen
               } else {
-                console.log(`${item.title} pressed`);
+                console.log('${item.title} pressed');
               }
             }}
           >
@@ -138,7 +128,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingHorizontal: 12,
-    paddingBottom: 100,
+    paddingBottom: 100, // space for bottom navbar
   },
   menuCard: {
     width: '47%',

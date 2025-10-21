@@ -117,14 +117,7 @@ const KnowledgeBlogScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => console.log('Back pressed')}>
-          <Ionicons name="arrow-back" size={28} color="#1C1C1E" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Knowledge Blog</Text>
-        <View style={{ width: 28 }} />
-      </View>
+     
 
       {/* Hero Section */}
       <View style={styles.heroSection}>
