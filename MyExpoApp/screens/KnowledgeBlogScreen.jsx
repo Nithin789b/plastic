@@ -125,7 +125,7 @@ const KnowledgeBlogScreen = () => {
         <Text style={styles.heroSubtitle}>
           Learn how plastic pollution affects our planet
         </Text>
-      </View>
+       </View>
 
       {/* Blog Categories */}
       <ScrollView 
