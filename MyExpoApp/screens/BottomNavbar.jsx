@@ -13,7 +13,7 @@ const BottomNavBar = () => {
     { name: 'Announce', icon: 'megaphone', iconOutline: 'megaphone-outline', screen: 'Announce' },
     { name: 'Upload', icon: 'image', iconOutline: 'image-outline', screen: 'ReportIssue' },
     { name: 'Alerts', icon: 'notifications', iconOutline: 'notifications-outline', screen: 'Alerts' },
-    { name: 'Profile', icon: 'person-circle', iconOutline: 'person-circle-outline', screen: 'Profile' }
+    { name: 'Profile', icon: 'person-circle', iconOutline: 'person-circle-outline', screen: 'ProfileScreen' }
   ];
 
   const handlePress = (tab) => {

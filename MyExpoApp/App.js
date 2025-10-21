@@ -3,18 +3,20 @@ import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+// Import Screens
 import HomeScreen from './screens/Homescreen';
-// import AnnounceScreen from './screens/AnnounceScreen';
 import ReportIssuePage from './pages/reportissue';
 import KnowledgeBlogScreen from './screens/KnowledgeBlogScreen';
-// import AlertsScreen from './screens/AlertsScreen';
-// import ProfileScreen from './screens/ProfileScreen';
-
+import PlasticAwarenessPuzzle from './screens/Quizscreen';
 import BottomNavBar from './screens/BottomNavbar';
-
+import  ProfileScreen from './screens/profilescreen';
+import selectActivity from './screens/volunter';
+import SignupScreen from './pages/signupform';
+import LoginScreen from './pages/loginform';
+// Create Stack Navigator
 const Stack = createNativeStackNavigator();
 
-// Wrapper to include bottom navbar
+// Wrapper to include Bottom Navbar
 const ScreenWithNavBar = ({ children }) => (
   <View style={{ flex: 1 }}>
     {children}
@@ -25,18 +27,20 @@ const ScreenWithNavBar = ({ children }) => (
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {/* Screens with Bottom Nav */}
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Signup">
+        <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+
+        {/* ✅ Home Screen with Bottom Navbar */}
         <Stack.Screen name="Home">
-          {() => <ScreenWithNavBar><HomeScreen /></ScreenWithNavBar>}
+          {() => (
+            <ScreenWithNavBar>
+              <HomeScreen />
+            </ScreenWithNavBar>
+          )}
         </Stack.Screen>
 
-        {/* Uncomment if you have this screen */}
-        {/* <Stack.Screen name="Announce">
-          {() => <ScreenWithNavBar><AnnounceScreen /></ScreenWithNavBar>}
-        </Stack.Screen> */}
-
-        {/* Screens without Bottom Nav */}
+        {/* ✅ Report Issue Page (without Bottom Navbar) */}
         <Stack.Screen
           name="ReportIssue"
           component={ReportIssuePage}
@@ -46,21 +50,47 @@ export default function App() {
             headerBackTitleVisible: false,
           }}
         />
-         <Stack.Screen
+
+        {/* ✅ Knowledge Blog Screen (without Bottom Navbar) */}
+        <Stack.Screen
           name="KnowledgeBlogScreen"
           component={KnowledgeBlogScreen}
           options={{
             headerShown: true,
+            title: 'Knowledge Blog',
+            headerBackTitleVisible: false,
+          }}
+        />
+         <Stack.Screen
+          name="ProfileScreen"
+          component={ProfileScreen}
+          options={{
+            headerShown: true,
+            title: 'Report Issue',
             headerBackTitleVisible: false,
           }}
         />
 
-        {/* <Stack.Screen name="Alerts">
-          {() => <ScreenWithNavBar><AlertsScreen /></ScreenWithNavBar>}
-        </Stack.Screen>
-        <Stack.Screen name="Profile">
-          {() => <ScreenWithNavBar><ProfileScreen /></ScreenWithNavBar>}
-        </Stack.Screen> */}
+        <Stack.Screen
+          name="selectActivity"
+          component={selectActivity}
+          options={{
+            headerShown: true,
+            title: 'Volunteer',
+            headerBackTitleVisible: false,
+          }}
+        />
+
+        {/* ✅ Plastic Awareness Puzzle Screen (without Bottom Navbar) */}
+        <Stack.Screen
+          name="PlasticAwarenessPuzzle"
+          component={PlasticAwarenessPuzzle}
+          options={{
+            headerShown: true,
+            title: 'Quiz',
+            headerBackTitleVisible: false,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -2,16 +2,16 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 
-const PlasticAwarenessPuzzleRN = () => {
+const PlasticAwarenessPuzzle = () => {
   const allPieces = [
-    { id: 1, emoji: '🧑', category: 'Human Impact', message: 'Humans consume microplastics daily' },
-    { id: 2, emoji: '⚠️', category: 'Human Impact', message: 'Microplastics found in our blood' },
-    { id: 3, emoji: '🐢', category: 'Marine Life', message: 'Sea turtles mistake plastic for food' },
-    { id: 4, emoji: '🌊', category: 'Marine Life', message: 'Oceans filled with plastic waste' },
-    { id: 5, emoji: '🦌', category: 'Land Animals', message: 'Wildlife trapped in plastic debris' },
-    { id: 6, emoji: '🛍️', category: 'Land Animals', message: 'Animals eat plastic bags' },
-    { id: 7, emoji: '💧', category: 'Water Systems', message: 'Plastic pollutes drinking water' },
-    { id: 8, emoji: '♻️', category: 'Water Systems', message: 'Recycling helps protect water' }
+    { id: 1, emoji: "🧑", category: "Human Impact", message: "Humans consume microplastics daily" },
+    { id: 2, emoji: "⚠️", category: "Human Impact", message: "Microplastics found in our blood" },
+    { id: 3, emoji: "🐢", category: "Marine Life", message: "Sea turtles mistake plastic for food" },
+    { id: 4, emoji: "🌊", category: "Marine Life", message: "Oceans filled with plastic waste" },
+    { id: 5, emoji: "🦌", category: "Land Animals", message: "Wildlife trapped in plastic debris" },
+    { id: 6, emoji: "🛍️", category: "Land Animals", message: "Animals eat plastic bags" },
+    { id: 7, emoji: "💧", category: "Water Systems", message: "Plastic pollutes drinking water" },
+    { id: 8, emoji: "♻️", category: "Water Systems", message: "Recycling helps protect water" },
   ];
 
   const categories = [
@@ -278,7 +278,7 @@ const PlasticAwarenessPuzzleRN = () => {
   );
 };
 
-export default PlasticAwarenessPuzzleRN;
+export default PlasticAwarenessPuzzle;
 
 const styles = StyleSheet.create({
   container: {
