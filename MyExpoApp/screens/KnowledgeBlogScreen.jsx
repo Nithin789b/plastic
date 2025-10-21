@@ -35,7 +35,6 @@ const KnowledgeBlogScreen = () => {
     },
     {
       id: 2,
-      title: 'Water Systems',
       icon: '💧',
       color: '#50C5F5',
       image: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800',
@@ -55,7 +54,6 @@ const KnowledgeBlogScreen = () => {
     },
     {
       id: 3,
-      title: 'Soil & Land',
       icon: '🌱',
       color: '#8B7355',
       image: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800',
@@ -75,7 +73,6 @@ const KnowledgeBlogScreen = () => {
     },
     {
       id: 4,
-      title: 'Human Impact',
       icon: '🌍',
       color: '#E85D75',
       image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800',
