@@ -71,7 +71,7 @@ const HomeScreenContent = () => {
               if (item.navigateTo) {
                 navigation.navigate(item.navigateTo); // navigate to screen
               } else {
-                console.log(`${item.title} pressed`);
+                console.log('${item.title} pressed');
               }
             }}
           >

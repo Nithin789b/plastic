@@ -16,15 +16,25 @@ const BottomNavBar = () => {
     { name: 'Profile', icon: 'person-circle', iconOutline: 'person-circle-outline', screen: 'Profile' }
   ];
 
+  const handlePress = (tab) => {
+    if (navigation && typeof navigation.navigate === 'function') {
+      navigation.navigate(tab.screen);
+    } else {
+      console.log(`${tab.name} pressed (no navigation available)`);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {tabs.map((tab) => {
-        const isActive = activeTab === tab.screen;
+        const isActive = activeTab === tab.screen || activeTab === tab.name;
         return (
           <TouchableOpacity
             key={tab.name}
             style={styles.tabItem}
-            onPress={() => navigation.navigate(tab.screen)}
+            onPress={() => handlePress(tab)}
+            accessibilityRole="button"
+            accessibilityState={{ selected: isActive }}
           >
             <Ionicons
               name={isActive ? tab.icon : tab.iconOutline}
