@@ -10,6 +10,9 @@ import KnowledgeBlogScreen from './screens/KnowledgeBlogScreen';
 import PlasticAwarenessPuzzle from './screens/Quizscreen';
 import BottomNavBar from './screens/BottomNavbar';
 import  ProfileScreen from './screens/profilescreen';
+import selectActivity from './screens/volunter';
+import SignupScreen from './pages/signupform';
+import LoginScreen from './pages/loginform';
 // Create Stack Navigator
 const Stack = createNativeStackNavigator();
 
@@ -24,8 +27,10 @@ const ScreenWithNavBar = ({ children }) => (
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Signup">
+        <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+
         {/* ✅ Home Screen with Bottom Navbar */}
         <Stack.Screen name="Home">
           {() => (
@@ -66,13 +71,23 @@ export default function App() {
           }}
         />
 
+        <Stack.Screen
+          name="selectActivity"
+          component={selectActivity}
+          options={{
+            headerShown: true,
+            title: 'Volunteer',
+            headerBackTitleVisible: false,
+          }}
+        />
+
         {/* ✅ Plastic Awareness Puzzle Screen (without Bottom Navbar) */}
         <Stack.Screen
           name="PlasticAwarenessPuzzle"
           component={PlasticAwarenessPuzzle}
           options={{
             headerShown: true,
-            title: '',
+            title: 'Quiz',
             headerBackTitleVisible: false,
           }}
         />
