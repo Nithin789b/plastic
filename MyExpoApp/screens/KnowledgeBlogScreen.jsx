@@ -13,88 +13,80 @@ import { Ionicons } from '@expo/vector-icons';
 const KnowledgeBlogScreen = () => {
   const [selectedBlog, setSelectedBlog] = useState(null);
 
-  const blogCategories = [
+const blogCategories = [
     {
       id: 1,
-      icon: '🐋',
       color: '#4A90E2',
-      image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800',
+      image: '../assets/images/marine-life.png',
       content: {
         intro: 'The ocean has become the ultimate sink for plastic pollution. An estimated 8 to 12 million metric tons of plastic enter our oceans annually, forming vast garbage patches and permeating every level of the water column.',
         sections: [
           {
-            title: 'Entanglement and Ingestion',
-            text: 'Marine animals, from tiny plankton to majestic whales, suffer horrifying fates due to plastic. Turtles mistake plastic bags for jellyfish, their primary food source, leading to fatal blockages in their digestive systems. Seabirds, seals, and dolphins become entangled in abandoned fishing gear and larger plastic debris, resulting in injury, drowning, or slow starvation.'
+            title: 'Effects',
+            text: 'Marine animals, from tiny plankton to majestic whales, suffer horrifying fates. Turtles mistake plastic bags for jellyfish, their primary food source, leading to fatal blockages. Seabirds, seals, and dolphins become entangled in abandoned fishing gear and debris, resulting in injury, drowning, or slow starvation.'
           },
           {
-            title: 'The Microplastic Threat',
-            text: 'As larger plastics break down, they form microplastics – tiny fragments less than 5mm in size. These insidious particles are ingested by virtually all marine organisms, entering the food web. They accumulate in the tissues of fish, shellfish, and other seafood, eventually making their way onto our dinner plates, posing unknown risks to human health.'
+            title: 'Causes',
+            text: 'This widespread contamination stems from various sources. The primary causes include improper disposal of single-use plastics from coastal communities, illegal dumping from ships, and land-based runoff, where rivers carry plastic waste from inland cities directly into the sea.'
           }
         ]
       }
     },
     {
       id: 2,
-      title: 'Water Systems',
-      icon: '💧',
       color: '#50C5F5',
-      image: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800',
+      image: '../assets/images/animal.png',
       content: {
-        intro: "Plastic's journey doesn't just end in the ocean; it contaminates freshwater systems long before. Rivers, lakes, and even groundwater are increasingly burdened by plastic debris.",
+        intro: "On a beach suffocating in plastic, innocent lives pay the ultimate price. A sea turtle lies entangled in deadly nets, while a seal and a baby bird are trapped by our throwaway trash. This is the heartbreaking, visual proof of the plastic pollution crisis impacting our oceans.",
         sections: [
           {
-            title: 'Rivers as Conveyor Belts',
-            text: 'Rivers act as major transporters of plastic from land-based sources to the marine environment. Every plastic bottle, bag, or wrapper discarded near a riverbank or washed into a storm drain has a high probability of reaching the sea. This not only pollutes the river itself but also harms the freshwater flora and fauna that inhabit it.'
+            title: 'Effects',
+            text: 'Plastic waste is frequently ingested by animals, causing fatal internal blockages and starvation. Entanglement in plastic debris leads to drowning, suffocation, and life-threatening injuries for countless species, while microplastics accumulate in their bodies, poisoning them from the inside out.'
           },
           {
-            title: 'Microplastics in Drinking Water',
-            text: 'Studies have revealed the presence of microplastics in tap water and bottled water worldwide. While the health implications are still being researched, this highlights the pervasive nature of plastic contamination, even reaching the water we consume daily.'
+            title: 'Causes',
+            text: 'Why does this happen? The main causes are human carelessness and flawed waste systems. Discarded fishing gear (ghost nets), rampant littering in parks and natural areas, and overflowing landfills all lead to plastic waste entering animal habitats, where it becomes a deadly trap.'
           }
         ]
       }
     },
     {
       id: 3,
-      title: 'Soil & Land',
-      icon: '🌱',
       color: '#8B7355',
-      image: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800',
+      image: '../assets/images/soil.png',
       content: {
         intro: 'While the ocean often gets the spotlight, plastic pollution in our soil is an equally serious and often overlooked problem. Agricultural films, plastic mulches, discarded consumer products, and microplastics from various sources contaminate the very ground that feeds us.',
         sections: [
           {
-            title: 'Altered Soil Structure and Health',
-            text: 'Plastic fragments can alter soil structure, reducing its ability to hold water and nutrients, and hindering aeration. This directly impacts plant growth and crop yields. Earthworms and other vital soil organisms, crucial for soil health, can ingest microplastics, affecting their health and the ecosystem services they provide.'
+            title: 'Effects',
+            text: 'Plastic fragments alter soil structure, reducing its ability to hold water and nutrients, and hindering aeration. This directly impacts plant growth and crop yields. Earthworms and other vital soil organisms, crucial for soil health, can ingest microplastics, affecting their health and disrupting the entire soil ecosystem.'
           },
           {
-            title: 'Chemical Leaching',
-            text: 'Plastics contain various additives like plasticizers, flame retardants, and colorants that can leach into the soil. These chemicals can be toxic to plants and microorganisms, and some can even be absorbed by crops, potentially entering the human food chain.'
+            title: 'Causes',
+            text: 'The root causes of soil plastic pollution include the widespread use of plastic products in agriculture, improper disposal of plastic waste, and the breakdown of larger plastic items into microplastics that infiltrate the soil. Lack of effective waste management systems exacerbates this issue, allowing plastics to accumulate in our farmlands and natural areas.'
           }
         ]
       }
     },
     {
       id: 4,
-      title: 'Human Impact',
-      icon: '🌍',
       color: '#E85D75',
-      image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800',
+      image: '../assets/images/human.png',
       content: {
         intro: 'The sheer scale of plastic production and consumption by humans is astounding. We produce hundreds of millions of tons of plastic every year, much of it single-use, designed to be thrown away after a brief moment of utility.',
         sections: [
           {
-            title: 'The Problem We Created',
-            text: 'Our reliance on plastic packaging, disposable products, and synthetic materials has created a relentless flood of waste. Inadequate waste management systems, coupled with littering and illegal dumping, ensure that a significant portion of this plastic enters our natural environment, often with devastating consequences.'
+            title: 'Effects',
+            text: 'The effects on human health are a growing concern. We ingest microplastics through contaminated food, water, and even the air we breathe. These particles have been found in human blood, lungs, and placenta. The long-term health consequences, including potential hormonal disruption and links to chronic diseases, are now under intense scientific investigation.'
           },
           {
-            title: 'Solutions We Can Implement',
-            text: 'Reduce, refuse, and reuse single-use plastics. Choose reusable alternatives for bags, bottles, and containers. Recycle properly, support sustainable products, participate in cleanups, and advocate for policy change. Our choices today will determine the health of our planet for generations to come.'
+            title: 'Causes',
+            text: 'Our reliance on plastic packaging, disposable products, and synthetic materials has created a relentless flood of waste. The primary causes are overconsumption of single-use items, inadequate waste management systems, and a "throwaway" culture that fails to account for the environmental cost of plastic.'
           }
         ]
       }
     }
-  ];
-
+  ];    
   const renderBlogCard = (blog) => (
     <TouchableOpacity 
       key={blog.id}

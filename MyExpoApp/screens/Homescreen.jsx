@@ -39,9 +39,10 @@ const HomeScreenContent = () => {
       title: 'Volunteer Registration',
       image: require('../assets/volunteer.png'),
       backgroundColor: '#E8DCC4',
+      navigateTo: 'selectActivity', // navigate on click
     },
   ];
-
+ 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header */}
