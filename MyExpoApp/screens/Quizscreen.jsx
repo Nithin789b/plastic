@@ -15,7 +15,7 @@ const PlasticAwarenessPuzzleRN = () => {
   ];
 
   const categories = [
-    { name: 'Human Impact', short: 'Human', ids: [1, 2] },
+    { name: 'Human Impact', short: 'Human', ids: [ 1, 2] },
     { name: 'Marine Life', short: 'Marine', ids: [3, 4] },
     { name: 'Land Animals', short: 'Land', ids: [5, 6] },
     { name: 'Water Systems', short: 'Water', ids: [7, 8] }

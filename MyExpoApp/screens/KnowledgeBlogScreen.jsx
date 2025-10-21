@@ -16,6 +16,7 @@ const KnowledgeBlogScreen = () => {
 const blogCategories = [
     {
       id: 1,
+      icon: '🌊',
       color: '#4A90E2',
       image: '../assets/images/marine-life.png',
       content: {
@@ -34,6 +35,7 @@ const blogCategories = [
     },
     {
       id: 2,
+      icon: '🐢',
       color: '#50C5F5',
       image: '../assets/images/animal.png',
       content: {
@@ -52,6 +54,7 @@ const blogCategories = [
     },
     {
       id: 3,
+      icon: '🌱',
       color: '#8B7355',
       image: '../assets/images/soil.png',
       content: {
@@ -70,6 +73,7 @@ const blogCategories = [
     },
     {
       id: 4,
+      icon: '🧍',
       color: '#E85D75',
       image: '../assets/images/human.png',
       content: {
