@@ -7,6 +7,7 @@ import HomeScreen from './screens/Homescreen';
 // import AnnounceScreen from './screens/AnnounceScreen';
 import ReportIssuePage from './pages/reportissue';
 import KnowledgeBlogScreen from './screens/KnowledgeBlogScreen';
+import PlasticAwarenessPuzzle  from './screens/Quizscreen';
 // import AlertsScreen from './screens/AlertsScreen';
 // import ProfileScreen from './screens/ProfileScreen';
 
@@ -49,6 +50,15 @@ export default function App() {
          <Stack.Screen
           name="KnowledgeBlogScreen"
           component={KnowledgeBlogScreen}
+          options={{
+            headerShown: true,
+            headerBackTitleVisible: false,
+          }}
+        />
+
+         <Stack.Screen
+          name="PlasticAwarenessPuzzle "
+          component={PlasticAwarenessPuzzle}
           options={{
             headerShown: true,
             headerBackTitleVisible: false,

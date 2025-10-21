@@ -26,6 +26,7 @@ const HomeScreenContent = () => {
       title: 'Quiz',
       image: require('../assets/quiz.png'),
       backgroundColor: '#E8DCC4',
+      navigateTo:'PlasticAwarenessPuzzle '
     },
     {
       id: 3,
