@@ -7,12 +7,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/Homescreen';
 import ReportIssuePage from './pages/reportissue';
 import KnowledgeBlogScreen from './screens/KnowledgeBlogScreen';
-import PlasticAwarenessPuzzle from './screens/Quizscreen';
+
 import BottomNavBar from './screens/BottomNavbar';
 import  ProfileScreen from './screens/profilescreen';
 import selectActivity from './screens/volunter';
 import SignupScreen from './pages/signupform';
 import LoginScreen from './pages/loginform';
+import EventCards from './screens/annocument';
+import Quiz from './screens/Quizscreen';
+
 // Create Stack Navigator
 const Stack = createNativeStackNavigator();
 
@@ -51,6 +54,16 @@ export default function App() {
           }}
         />
 
+         <Stack.Screen
+          name="EventCards"
+          component={EventCards}
+          options={{
+            headerShown: true,
+            title: 'Announcements',
+            headerBackTitleVisible: false,
+          }}
+        />
+
         {/* ✅ Knowledge Blog Screen (without Bottom Navbar) */}
         <Stack.Screen
           name="KnowledgeBlogScreen"
@@ -81,10 +94,10 @@ export default function App() {
           }}
         />
 
-        {/* ✅ Plastic Awareness Puzzle Screen (without Bottom Navbar) */}
+        {/* ✅ Quiz Screen (without Bottom Navbar) */}
         <Stack.Screen
-          name="PlasticAwarenessPuzzle"
-          component={PlasticAwarenessPuzzle}
+          name="Quiz"
+          component={Quiz}
           options={{
             headerShown: true,
             title: 'Quiz',
