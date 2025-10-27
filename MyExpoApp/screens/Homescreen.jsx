@@ -118,7 +118,7 @@ const HomeScreen = () => {
         <Text style={styles.welcomeText}>Welcome back, Alex!</Text>
         <View style={styles.locationContainer}>
           <Ionicons name="location" size={18} color="#8E8E93" />
-          <Text style={styles.locationText}>New York, USA</Text>
+          <Text style={styles.locationText}>Bhimavaram, Andhra Pradesh</Text>
         </View>
       </View>
 

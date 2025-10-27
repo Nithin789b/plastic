@@ -15,7 +15,7 @@ import SignupScreen from './pages/signupform';
 import LoginScreen from './pages/loginform';
 import EventCards from './screens/annocument';
 import Quiz from './screens/Quizscreen';
-
+// import CertificateScreen from './pages/certificategeneration';
 // Create Stack Navigator
 const Stack = createNativeStackNavigator();
 
@@ -53,6 +53,16 @@ export default function App() {
             headerBackTitleVisible: false,
           }}
         />
+        {/* ✅ Certificate Generation Screen (without Bottom Navbar) */}
+        {/* <Stack.Screen
+          name="CertificateGeneration"
+          component={CertificateScreen}
+          options={{
+            headerShown: true,
+            title: 'Certificate',
+            headerBackTitleVisible: false,
+          }}
+        /> */}
 
          <Stack.Screen
           name="EventCards"
