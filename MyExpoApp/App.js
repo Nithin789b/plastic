@@ -3,18 +3,23 @@ import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+// Import Screens
 import HomeScreen from './screens/Homescreen';
-// import AnnounceScreen from './screens/AnnounceScreen';
 import ReportIssuePage from './pages/reportissue';
 import KnowledgeBlogScreen from './screens/KnowledgeBlogScreen';
-// import AlertsScreen from './screens/AlertsScreen';
-// import ProfileScreen from './screens/ProfileScreen';
 
 import BottomNavBar from './screens/BottomNavbar';
+import  ProfileScreen from './screens/profilescreen';
+import selectActivity from './screens/volunter';
+import SignupScreen from './pages/signupform';
+import LoginScreen from './pages/loginform';
+import EventCards from './screens/annocument';
+import Quiz from './screens/Quizscreen';
 
+// Create Stack Navigator
 const Stack = createNativeStackNavigator();
 
-// Wrapper to include bottom navbar
+// Wrapper to include Bottom Navbar
 const ScreenWithNavBar = ({ children }) => (
   <View style={{ flex: 1 }}>
     {children}
@@ -25,18 +30,20 @@ const ScreenWithNavBar = ({ children }) => (
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {/* Screens with Bottom Nav */}
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Signup">
+        <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+
+        {/* ✅ Home Screen with Bottom Navbar */}
         <Stack.Screen name="Home">
-          {() => <ScreenWithNavBar><HomeScreen /></ScreenWithNavBar>}
+          {() => (
+            <ScreenWithNavBar>
+              <HomeScreen />
+            </ScreenWithNavBar>
+          )}
         </Stack.Screen>
 
-        {/* Uncomment if you have this screen */}
-        {/* <Stack.Screen name="Announce">
-          {() => <ScreenWithNavBar><AnnounceScreen /></ScreenWithNavBar>}
-        </Stack.Screen> */}
-
-        {/* Screens without Bottom Nav */}
+        {/* ✅ Report Issue Page (without Bottom Navbar) */}
         <Stack.Screen
           name="ReportIssue"
           component={ReportIssuePage}
@@ -46,21 +53,57 @@ export default function App() {
             headerBackTitleVisible: false,
           }}
         />
+
          <Stack.Screen
-          name="KnowledgeBlogScreen"
-          component={KnowledgeBlogScreen}
+          name="EventCards"
+          component={EventCards}
           options={{
             headerShown: true,
+            title: 'Announcements',
             headerBackTitleVisible: false,
           }}
         />
 
-        {/* <Stack.Screen name="Alerts">
-          {() => <ScreenWithNavBar><AlertsScreen /></ScreenWithNavBar>}
-        </Stack.Screen>
-        <Stack.Screen name="Profile">
-          {() => <ScreenWithNavBar><ProfileScreen /></ScreenWithNavBar>}
-        </Stack.Screen> */}
+        {/* ✅ Knowledge Blog Screen (without Bottom Navbar) */}
+        <Stack.Screen
+          name="KnowledgeBlogScreen"
+          component={KnowledgeBlogScreen}
+          options={{
+            headerShown: true,
+            title: 'Knowledge Blog',
+            headerBackTitleVisible: false,
+          }}
+        />
+         <Stack.Screen
+          name="ProfileScreen"
+          component={ProfileScreen}
+          options={{
+            headerShown: true,
+            title: 'Report Issue',
+            headerBackTitleVisible: false,
+          }}
+        />
+
+        <Stack.Screen
+          name="selectActivity"
+          component={selectActivity}
+          options={{
+            headerShown: true,
+            title: 'Volunteer',
+            headerBackTitleVisible: false,
+          }}
+        />
+
+        {/* ✅ Quiz Screen (without Bottom Navbar) */}
+        <Stack.Screen
+          name="Quiz"
+          component={Quiz}
+          options={{
+            headerShown: true,
+            title: 'Quiz',
+            headerBackTitleVisible: false,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

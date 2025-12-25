@@ -1,107 +1,94 @@
 // Volunteer.js
-import React from "react";
+import React, { useState } from "react";
 import {
   SafeAreaView,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Alert,
   ScrollView,
-  Dimensions,
   Platform,
 } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-
-const { width } = Dimensions.get("window");
-const CONTAINER_WIDTH = Math.min(400, width - 40);
-
-const selectActivity = (activityName) => {
-  Alert.alert(
-    `You selected: ${activityName}.`,
-    "Next, you would be taken to its registration form."
-  );
-};
+import { useNavigation } from "@react-navigation/native";
 
 export default function Volunteer() {
+  const [isInterested, setIsInterested] = useState(false);
+  const navigation = useNavigation();
+
+  const handleSubmit = () => {
+    if (!isInterested) {
+      alert("Please confirm your interest first!");
+      return;
+    }
+    alert("Thank you! Your response has been submitted.");
+    navigation.navigate("Home");
+  };
+
+  const activities = [
+    {
+      title: "Cleanliness Drive",
+      desc: "Help make our community cleaner and greener.",
+      icon: "broom",
+      color: "#FF6B6B",
+    },
+    {
+      title: "Awareness Campaign",
+      desc: "Spread the word about important local issues.",
+      icon: "bullhorn",
+      color: "#6C5CE7",
+    },
+    {
+      title: "Plantation",
+      desc: "Join us in planting trees for a better future.",
+      icon: "seedling",
+      color: "#00B894",
+    },
+  ];
+
   return (
     <SafeAreaView style={styles.screen}>
-      <View style={[styles.mobileContainer, { width: CONTAINER_WIDTH }]}>
-        {/* Status bar mimic */}
-        <View style={styles.statusBar}>
-          <Text style={styles.statusBarTime}>9:42</Text>
-          <View style={styles.statusIcons}>
-            <FontAwesome5 name="signal" size={16} />
-            <FontAwesome5 name="wifi" size={16} style={styles.iconSpacing} />
-            <FontAwesome5 name="battery-full" size={16} style={styles.iconSpacing} />
-          </View>
+      <ScrollView contentContainerStyle={styles.content}>
+        {/* Top Question */}
+        <View style={styles.questionWrap}>
+          <Text style={styles.questionText}>
+            In the future, are you interested in participating in these events?
+          </Text>
         </View>
 
-        <ScrollView contentContainerStyle={styles.content}>
-          {/* Header */}
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => Alert.alert("Back button clicked")}>
-              <FontAwesome5 name="arrow-left" size={20} style={styles.backIcon} />
-            </TouchableOpacity>
-            <Text style={styles.title}>Volunteer</Text>
-          </View>
-
-          {/* Subtitle */}
-          <View style={styles.subtitleWrap}>
-            <Text style={styles.subtitleTitle}>Choose an Activity</Text>
-            <Text style={styles.subtitleText}>Select an event you'd like to participate in.</Text>
-          </View>
-
-          {/* Activity Cards */}
-          <View style={styles.cardsWrap}>
-            {/* Cleanliness Drive */}
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={[styles.card, styles.cardClean]}
-              onPress={() => selectActivity("Cleanliness Drive")}
-            >
+        {/* Activity Cards */}
+        <View style={styles.cardsWrap}>
+          {activities.map((item, index) => (
+            <View key={index} style={[styles.card, { backgroundColor: item.color }]}>
               <View style={styles.cardIconWrap}>
-                <View style={styles.iconBg}><FontAwesome5 name="broom" size={26} /></View>
+                <View style={styles.iconBg}>
+                  <FontAwesome5 name={item.icon} size={28} color="#fff" />
+                </View>
               </View>
               <View style={styles.cardTextWrap}>
-                <Text style={styles.cardTitle}>Cleanliness Drive</Text>
-                <Text style={styles.cardDesc}>Help make our community cleaner and greener.</Text>
+                <Text style={styles.cardTitle}>{item.title}</Text>
+                <Text style={styles.cardDesc}>{item.desc}</Text>
               </View>
-            </TouchableOpacity>
+            </View>
+          ))}
+        </View>
 
-            {/* Awareness Campaign */}
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={[styles.card, styles.cardAwareness]}
-              onPress={() => selectActivity("Awareness Campaign")}
-            >
-              <View style={styles.cardIconWrap}>
-                <View style={styles.iconBg}><FontAwesome5 name="bullhorn" size={26} /></View>
-              </View>
-              <View style={styles.cardTextWrap}>
-                <Text style={styles.cardTitle}>Awareness Campaign</Text>
-                <Text style={styles.cardDesc}>Spread the word about important local issues.</Text>
-              </View>
-            </TouchableOpacity>
-
-            {/* Plantation */}
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={[styles.card, styles.cardPlant]}
-              onPress={() => selectActivity("Plantation")}
-            >
-              <View style={styles.cardIconWrap}>
-                <View style={styles.iconBg}><FontAwesome5 name="seedling" size={26} /></View>
-              </View>
-              <View style={styles.cardTextWrap}>
-                <Text style={styles.cardTitle}>Plantation</Text>
-                <Text style={styles.cardDesc}>Join us in planting trees for a better future.</Text>
-              </View>
-            </TouchableOpacity>
+        {/* Checkbox Section */}
+        <TouchableOpacity
+          style={styles.checkboxWrap}
+          onPress={() => setIsInterested(!isInterested)}
+        >
+          <View style={[styles.checkbox, isInterested && styles.checkboxChecked]}>
+            {isInterested && <FontAwesome5 name="check" size={18} color="#fff" />}
           </View>
+          <Text style={styles.checkboxLabel}>Yes, I am interested</Text>
+        </TouchableOpacity>
 
-        </ScrollView>
-      </View>
+        {/* Submit Button */}
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitText}>Submit</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -109,123 +96,103 @@ export default function Volunteer() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#f2f2f7",
-    alignItems: "center",
+    backgroundColor: "#f0f2f5",
     paddingTop: Platform.OS === "android" ? 24 : 0,
   },
-  mobileContainer: {
-    height: 820,
-    borderWidth: 1,
-    borderColor: "#d1d1d1",
-    borderRadius: 32,
-    backgroundColor: "#f2f2f7",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
-    overflow: "hidden",
-  },
-  statusBar: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: "#f2f2f7",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  statusBarTime: {
-    fontWeight: "600",
-    fontSize: 16,
-  },
-  statusIcons: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  iconSpacing: {
-    marginLeft: 8,
-  },
-
   content: {
     paddingHorizontal: 20,
     paddingBottom: 40,
   },
-
-  header: {
-    flexDirection: "row",
+  questionWrap: {
+    marginVertical: 20,
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 4,
     alignItems: "center",
-    paddingTop: 10,
-    paddingBottom: 20,
   },
-  backIcon: {
-    marginRight: 12,
-  },
-  title: {
-    fontSize: 28,
+  questionText: {
+    fontSize: 18,
     fontWeight: "700",
-    color: "#000",
+    color: "#111",
+    textAlign: "center",
   },
-
-  subtitleWrap: {
-    marginBottom: 24,
-  },
-  subtitleTitle: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#000",
-  },
-  subtitleText: {
-    color: "#6b7280",
-    marginTop: 6,
-  },
-
   cardsWrap: {
-    gap: 18, // Android might ignore gap; controls spacing below with margin
+    flexDirection: "column",
+    gap: 16,
     marginBottom: 20,
   },
-
   card: {
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 24,
-    padding: 18,
+    borderRadius: 20,
+    padding: 20,
     shadowColor: "#000",
-    shadowOpacity: 0.03,
-    shadowRadius: 6,
-    elevation: 1,
-    marginBottom: 18,
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
-
-  cardClean: {
-    backgroundColor: "#F5E6D3",
-  },
-  cardAwareness: {
-    backgroundColor: "#E8DCC4",
-  },
-  cardPlant: {
-    backgroundColor: "#D4EFDF",
-  },
-
   cardIconWrap: {
-    marginRight: 14,
+    marginRight: 16,
   },
   iconBg: {
-    backgroundColor: "rgba(255,255,255,0.6)",
-    padding: 12,
-    borderRadius: 12,
+    width: 60,
+    height: 60,
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.2)",
   },
-
   cardTextWrap: {
     flex: 1,
   },
   cardTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#000",
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#fff",
+    marginBottom: 6,
   },
   cardDesc: {
-    color: "#4b5563",
-    marginTop: 4,
+    fontSize: 14,
+    color: "rgba(255,255,255,0.9)",
+  },
+  checkboxWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  checkbox: {
+    width: 26,
+    height: 26,
+    borderWidth: 2,
+    borderColor: "#6C5CE7",
+    borderRadius: 6,
+    marginRight: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkboxChecked: {
+    backgroundColor: "#6C5CE7",
+    borderColor: "#6C5CE7",
+  },
+  checkboxLabel: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#111",
+  },
+  submitButton: {
+    backgroundColor: "#6C5CE7",
+    paddingVertical: 16,
+    borderRadius: 14,
+    alignItems: "center",
+    marginHorizontal: 0,
+  },
+  submitText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "700",
   },
 });

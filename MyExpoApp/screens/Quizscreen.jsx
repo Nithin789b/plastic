@@ -1,417 +1,488 @@
-// PlasticAwarenessPuzzleRN.js
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
+// screens/Quiz.jsx
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 
-const PlasticAwarenessPuzzleRN = () => {
-  const allPieces = [
-    { id: 1, emoji: '🧑', category: 'Human Impact', message: 'Humans consume microplastics daily' },
-    { id: 2, emoji: '⚠️', category: 'Human Impact', message: 'Microplastics found in our blood' },
-    { id: 3, emoji: '🐢', category: 'Marine Life', message: 'Sea turtles mistake plastic for food' },
-    { id: 4, emoji: '🌊', category: 'Marine Life', message: 'Oceans filled with plastic waste' },
-    { id: 5, emoji: '🦌', category: 'Land Animals', message: 'Wildlife trapped in plastic debris' },
-    { id: 6, emoji: '🛍️', category: 'Land Animals', message: 'Animals eat plastic bags' },
-    { id: 7, emoji: '💧', category: 'Water Systems', message: 'Plastic pollutes drinking water' },
-    { id: 8, emoji: '♻️', category: 'Water Systems', message: 'Recycling helps protect water' }
-  ];
+const questions = [
+  {
+    question: "When buying snacks from the canteen, which option creates less plastic waste?",
+    image: "samosa_snack_comparison",
+    imageDesc: "🛍️ Plastic bag vs. 🧺 Reusable cloth bag",
+    options: ["Using a plastic bag", "Using a reusable cloth bag"],
+    answer: "Using a reusable cloth bag",
+  },
+  {
+    question: "You're thirsty during school. Which is the better choice for the environment?",
+    image: "water_bottle_comparison",
+    imageDesc: "🥤 Plastic bottle vs. 🍶 Steel bottle",
+    options: ["Buying a new plastic water bottle", "Refilling a reusable steel bottle"],
+    answer: "Refilling a reusable steel bottle",
+  },
+  {
+    question: "For packing your lunch, which method helps reduce plastic pollution?",
+    image: "lunch_packing_comparison",
+    imageDesc: "🥡 Plastic wrap vs. 🍱 Tiffin box",
+    options: ["Wrapping food in plastic and using disposable cutlery", "Using a reusable tiffin box with reusable cutlery"],
+    answer: "Using a reusable tiffin box with reusable cutlery",
+  },
+  {
+    question: "After finishing your juice box and other snacks, how should you dispose of the waste to help recycling efforts?",
+    image: "waste_disposal_comparison",
+    imageDesc: "🗑️ Mixed waste vs. ♻️ Segregated bins",
+    options: ["Throwing all waste into one bin", "Separating plastic, wet, and paper waste into different bins"],
+    answer: "Separating plastic, wet, and paper waste into different bins",
+  },
+  {
+    question: "Your family is going shopping. Which bag should you take to avoid plastic pollution?",
+    image: "shopping_bag_comparison",
+    imageDesc: "🛍️ Plastic bag vs. 👜 Cloth bag",
+    options: ["Plastic carry bag", "Reusable cloth bag"],
+    answer: "Reusable cloth bag",
+  },
+  {
+    question: "You've finished a cold drink. What's the most responsible thing to do with the plastic straw?",
+    image: "straw_disposal_comparison",
+    imageDesc: "🥤 Plastic straw vs. 🌾 Paper/Reusable straw",
+    options: ["Throw it on the ground", "Ask for no straw next time, or use a reusable one"],
+    answer: "Ask for no straw next time, or use a reusable one",
+  },
+  {
+    question: "You see a plastic bottle lying on the street. What's the best action to take?",
+    image: "street_litter_action",
+    imageDesc: "🚮 Pick up litter vs. 👁️ Ignore it",
+    options: ["Leave it there", "Pick it up and put it in a recycling bin"],
+    answer: "Pick it up and put it in a recycling bin",
+  },
+  {
+    question: "Which of these everyday items contributes most to single-use plastic waste?",
+    image: "single_use_items_comparison",
+    imageDesc: "📚 Books vs. 🥤 Disposable items",
+    options: ["Books", "Plastic wrappers and disposable containers"],
+    answer: "Plastic wrappers and disposable containers",
+  },
+  {
+    question: "To help marine life, what should you avoid doing near rivers or the ocean?",
+    image: "river_ocean_litter",
+    imageDesc: "🌊 Clean water vs. 🗑️ Polluted water",
+    options: ["Throwing plastic waste into the water", "Ensuring no plastic waste enters the water"],
+    answer: "Ensuring no plastic waste enters the water",
+  },
+  {
+    question: "When buying groceries, what helps reduce plastic packaging?",
+    image: "grocery_shopping_options",
+    imageDesc: "📦 Pre-packaged vs. 🥬 Loose vegetables",
+    options: ["Buying pre-packaged vegetables in plastic trays", "Choosing loose vegetables and carrying a reusable net bag"],
+    answer: "Choosing loose vegetables and carrying a reusable net bag",
+  },
+];
 
-  const categories = [
-    { name: 'Human Impact', short: 'Human', ids: [ 1, 2] },
-    { name: 'Marine Life', short: 'Marine', ids: [3, 4] },
-    { name: 'Land Animals', short: 'Land', ids: [5, 6] },
-    { name: 'Water Systems', short: 'Water', ids: [7, 8] }
-  ];
+const Quiz = () => {
+  const [current, setCurrent] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showScore, setShowScore] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [isAnswered, setIsAnswered] = useState(false);
 
-  // grid has 8 slots (2 slots per category)
-  const [grid, setGrid] = useState(Array(8).fill(null));
-  const [availablePieces, setAvailablePieces] = useState(() =>
-    [...allPieces].sort(() => Math.random() - 0.5)
-  );
-  const [selectedPiece, setSelectedPiece] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [completedCategories, setCompletedCategories] = useState([]);
-  const [showCelebration, setShowCelebration] = useState(false);
-
-  // Select a piece from available (or from grid to move)
-  const selectAvailablePiece = (piece) => {
-    if (submitted) return;
-    setSelectedPiece({ piece, from: 'available' });
-  };
-
-  const selectPlacedPiece = (index) => {
-    if (submitted) return;
-    const piece = grid[index];
-    if (!piece) return;
-    setSelectedPiece({ piece, from: 'grid', gridIndex: index });
-  };
-
-  // Place selected on a grid index
-  const placeOnGrid = (index) => {
-    if (!selectedPiece || submitted) return;
-
-    const newGrid = [...grid];
-    const newAvailable = [...availablePieces];
-
-    if (selectedPiece.from === 'available') {
-      // If target slot already has a piece, move it back to available
-      if (newGrid[index]) {
-        newAvailable.push(newGrid[index]);
-      }
-      newGrid[index] = selectedPiece.piece;
-      // remove placed piece from available
-      const idx = newAvailable.findIndex((p) => p.id === selectedPiece.piece.id);
-      if (idx > -1) newAvailable.splice(idx, 1);
-    } else if (selectedPiece.from === 'grid') {
-      // swap or move within grid
-      const fromIdx = selectedPiece.gridIndex;
-      if (fromIdx === index) {
-        // tapping same slot -> deselect
-        setSelectedPiece(null);
-        return;
-      }
-      // if target has piece, swap them
-      const temp = newGrid[index];
-      newGrid[index] = newGrid[fromIdx];
-      newGrid[fromIdx] = temp || null;
+  const handleAnswer = (selected) => {
+    if (isAnswered) return;
+    
+    setSelectedAnswer(selected);
+    setIsAnswered(true);
+    
+    if (selected === questions[current].answer) {
+      setScore(score + 1);
     }
 
-    setGrid(newGrid);
-    setAvailablePieces(newAvailable);
-    setSelectedPiece(null);
-  };
-
-  // Return a placed piece back to available by tapping an 'empty area' or long-press on piece (we provide a button)
-  const removeFromGridToAvailable = (index) => {
-    if (submitted) return;
-    const newGrid = [...grid];
-    const newAvailable = [...availablePieces];
-    if (newGrid[index]) {
-      newAvailable.push(newGrid[index]);
-      newGrid[index] = null;
-      setGrid(newGrid);
-      setAvailablePieces(newAvailable);
-      setSelectedPiece(null);
-    }
-  };
-
-  const resetPuzzle = () => {
-    setGrid(Array(8).fill(null));
-    setAvailablePieces([...allPieces].sort(() => Math.random() - 0.5));
-    setCompletedCategories([]);
-    setShowCelebration(false);
-    setSubmitted(false);
-    setSelectedPiece(null);
-  };
-
-  const handleSubmit = () => {
-    const completed = [];
-
-    categories.forEach((cat, catIndex) => {
-      const startIdx = catIndex * 2;
-      const piece1 = grid[startIdx];
-      const piece2 = grid[startIdx + 1];
-
-      if (
-        piece1 &&
-        piece2 &&
-        cat.ids.includes(piece1.id) &&
-        cat.ids.includes(piece2.id)
-      ) {
-        completed.push(cat.name);
+    setTimeout(() => {
+      if (current + 1 < questions.length) {
+        setCurrent(current + 1);
+        setSelectedAnswer(null);
+        setIsAnswered(false);
+      } else {
+        setShowScore(true);
       }
-    });
-
-    setSubmitted(true);
-    setCompletedCategories(completed);
-    setTimeout(() => setShowCelebration(true), 500);
+    }, 1500);
   };
 
-  const isCategoryComplete = (catIndex) => {
-    if (!submitted) return false;
-    return completedCategories.includes(categories[catIndex].name);
+  const restartQuiz = () => {
+    setCurrent(0);
+    setScore(0);
+    setShowScore(false);
+    setSelectedAnswer(null);
+    setIsAnswered(false);
   };
 
-  const isCategoryWrong = (catIndex) => {
-    if (!submitted) return false;
-    const startIdx = catIndex * 2;
-    const piece1 = grid[startIdx];
-    const piece2 = grid[startIdx + 1];
-    return piece1 && piece2 && !completedCategories.includes(categories[catIndex].name);
+  const getButtonStyle = (option) => {
+    if (!isAnswered) return styles.option;
+    
+    if (option === questions[current].answer) {
+      return [styles.option, styles.correctOption];
+    }
+    if (option === selectedAnswer && option !== questions[current].answer) {
+      return [styles.option, styles.wrongOption];
+    }
+    return [styles.option, styles.disabledOption];
   };
 
-  const allGridsFilled = grid.every((slot) => slot !== null);
+  const getQuestionImage = (imageName, imageDesc) => {
+    return (
+      <View style={styles.imagePlaceholder}>
+        <Text style={styles.imageDescText}>{imageDesc}</Text>
+        <Text style={styles.imageLabel}>Visual Comparison</Text>
+      </View>
+    );
+  };
+
+  if (showScore) {
+    const percentage = Math.round((score / questions.length) * 100);
+    let message = "";
+    let emoji = "";
+
+    if (percentage >= 80) {
+      message = "Excellent! You're a plastic pollution champion!";
+      emoji = "🌟";
+    } else if (percentage >= 60) {
+      message = "Great job! You're on the right track!";
+      emoji = "👍";
+    } else {
+      message = "Keep learning! Every small action counts!";
+      emoji = "💪";
+    }
+
+    return (
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.scoreCard}>
+          <Text style={styles.emoji}>{emoji}</Text>
+          <Text style={styles.scoreTitle}>Quiz Complete!</Text>
+          <Text style={styles.scoreText}>
+            Your Score: {score} / {questions.length}
+          </Text>
+          <Text style={styles.percentage}>{percentage}%</Text>
+          <Text style={styles.message}>{message}</Text>
+          
+          <View style={styles.statsContainer}>
+            <View style={styles.statBox}>
+              <Text style={styles.statNumber}>{score}</Text>
+              <Text style={styles.statLabel}>Correct</Text>
+            </View>
+            <View style={styles.statBox}>
+              <Text style={[styles.statNumber, styles.wrongStat]}>
+                {questions.length - score}
+              </Text>
+              <Text style={styles.statLabel}>Incorrect</Text>
+            </View>
+          </View>
+
+          <TouchableOpacity style={styles.restartButton} onPress={restartQuiz}>
+            <Text style={styles.restartButtonText}>🔄 Try Again</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>🌍 Plastic Awareness Puzzle</Text>
-        <Text style={styles.subtitle}>Tap a piece, then tap a slot to place it</Text>
-
-        <View style={styles.progress}>
-          <Text style={styles.trophy}>🏆</Text>
-          <Text style={styles.progressText}>{completedCategories.length} / 4 Categories Complete</Text>
+      <View style={styles.quizCard}>
+        <View style={styles.header}>
+          <Text style={styles.progress}>
+            Question {current + 1} of {questions.length}
+          </Text>
+          <View style={styles.scoreIndicator}>
+            <Text style={styles.scoreIndicatorText}>Score: {score}</Text>
+          </View>
         </View>
-      </View>
-
-      <View style={styles.main}>
-        {/* Left: Available pieces */}
-        <View style={styles.availableBox}>
-          <View style={styles.availableHeader}>
-            <Text style={styles.availableTitle}>✨ Pieces</Text>
-            <Text style={styles.count}>{availablePieces.length}</Text>
-          </View>
-
-          <View style={styles.availableGrid}>
-            {availablePieces.map((piece) => {
-              const isSelected = selectedPiece && selectedPiece.piece.id === piece.id && selectedPiece.from === 'available';
-              return (
-                <TouchableOpacity
-                  key={piece.id}
-                  style={[styles.pieceTile, isSelected && styles.selectedPiece]}
-                  onPress={() => selectAvailablePiece(piece)}
-                >
-                  <Text style={styles.pieceEmoji}>{piece.emoji}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-
-          <TouchableOpacity style={styles.button} onPress={resetPuzzle}>
-            <Text style={styles.buttonText}>🔁 Reset</Text>
-          </TouchableOpacity>
-
-          {allGridsFilled && !submitted && (
-            <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={handleSubmit}>
-              <Text style={[styles.buttonText, styles.submitButtonText]}>✅ Submit Answer</Text>
-            </TouchableOpacity>
-          )}
-
-          <Text style={styles.smallText}>Filled: {grid.filter(s => s !== null).length} / 8</Text>
+        
+        <View style={styles.progressBar}>
+          <View 
+            style={[
+              styles.progressFill, 
+              { width: `${((current + 1) / questions.length) * 100}%` }
+            ]} 
+          />
         </View>
 
-        {/* Right: Categories and grid */}
-        <View style={styles.categoriesBox}>
-          {categories.map((category, catIndex) => {
-            const startIdx = catIndex * 2;
-            const isComplete = isCategoryComplete(catIndex);
-            const wrong = isCategoryWrong(catIndex);
-            return (
-              <View
-                key={category.name}
-                style={[
-                  styles.categoryCard,
-                  isComplete ? styles.cardComplete : wrong ? styles.cardWrong : styles.cardNeutral
-                ]}
-              >
-                <View style={styles.categoryHeader}>
-                  <Text style={styles.categoryIcon}>🌿</Text>
-                  <Text style={styles.categoryTitle}>{category.name}</Text>
-                  {isComplete && <Text style={styles.check}>✅</Text>}
-                  {wrong && <Text style={styles.wrong}>✗ Wrong</Text>}
-                </View>
+        {getQuestionImage(questions[current].image, questions[current].imageDesc)}
 
-                <View style={styles.slotRow}>
-                  {[0, 1].map((offset) => {
-                    const index = startIdx + offset;
-                    const piece = grid[index];
-                    return (
-                      <TouchableOpacity
-                        key={index}
-                        style={[styles.slot, piece ? styles.slotFilled : styles.slotEmpty]}
-                        onPress={() => {
-                          if (selectedPiece) {
-                            // try to place selected on this slot
-                            placeOnGrid(index);
-                          } else if (piece) {
-                            // select placed piece to move
-                            selectPlacedPiece(index);
-                          }
-                        }}
-                        onLongPress={() => removeFromGridToAvailable(index)}
-                      >
-                        {piece ? (
-                          <Text style={styles.pieceEmojiLarge} accessibilityLabel={piece.message}>
-                            {piece.emoji}
-                          </Text>
-                        ) : (
-                          <Text style={styles.slotNumber}>{offset + 1}</Text>
-                        )}
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
+        <Text style={styles.question}>{questions[current].question}</Text>
 
-                {isComplete && grid[startIdx] && (
-                  <View style={styles.messageBox}>
-                    <Text style={styles.messageText}>✓ {grid[startIdx].message}</Text>
-                  </View>
-                )}
+        <View style={styles.optionsContainer}>
+          {questions[current].options.map((option, index) => (
+            <TouchableOpacity
+              key={index}
+              style={getButtonStyle(option)}
+              onPress={() => handleAnswer(option)}
+              disabled={isAnswered}
+              activeOpacity={0.7}
+            >
+              <View style={styles.optionContent}>
+                <Text style={styles.optionNumber}>{String.fromCharCode(65 + index)}</Text>
+                <Text style={styles.optionText}>{option}</Text>
               </View>
-            );
-          })}
-
-          {/* Feedback Area / Celebration */}
-          {showCelebration ? (
-            <View style={styles.celebration}>
-              <Text style={styles.award}>🏅</Text>
-              <Text style={styles.celebrationTitle}>
-                {completedCategories.length === 4 ? '🎉 Perfect Score!' : '🌟 Great Effort!'}
-              </Text>
-              <Text style={styles.celebrationSubtitle}>
-                You got {completedCategories.length} / 4 categories right
-              </Text>
-              <TouchableOpacity style={[styles.button, styles.tryAgain]} onPress={resetPuzzle}>
-                <Text style={styles.buttonText}>🔁 Try Again</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={styles.hintBox}>
-              <Text style={styles.hintText}>
-                {allGridsFilled && !submitted
-                  ? '✨ All pieces placed! Tap Submit Answer to check your results'
-                  : '💡 Tap a piece, then tap a slot to place it. Long-press a placed piece to return it to the pool.'}
-              </Text>
-            </View>
-          )}
+              {isAnswered && option === questions[current].answer && (
+                <Text style={styles.checkmark}>✓</Text>
+              )}
+              {isAnswered && option === selectedAnswer && option !== questions[current].answer && (
+                <Text style={styles.crossmark}>✗</Text>
+              )}
+            </TouchableOpacity>
+          ))}
         </View>
+
+        {isAnswered && (
+          <View style={styles.feedbackContainer}>
+            <Text style={selectedAnswer === questions[current].answer ? styles.correctFeedback : styles.wrongFeedback}>
+              {selectedAnswer === questions[current].answer 
+                ? "🎉 Correct! Great job!" 
+                : "❌ Incorrect. Keep learning!"}
+            </Text>
+          </View>
+        )}
       </View>
     </ScrollView>
   );
 };
 
-export default PlasticAwarenessPuzzleRN;
-
 const styles = StyleSheet.create({
   container: {
+    flexGrow: 1,
+    backgroundColor: "#e8f5e9",
     padding: 16,
+    paddingTop: 40,
     paddingBottom: 40,
-    backgroundColor: '#fff',
+  },
+  quizCard: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 8,
   },
   header: {
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 12,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: '800',
-    color: '#1f2937',
-    marginBottom: 6,
-  },
-  subtitle: {
-    color: '#6b7280',
-    marginBottom: 8,
   },
   progress: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FEF3C7',
+    fontSize: 14,
+    color: "#666",
+    fontWeight: "600",
+  },
+  scoreIndicator: {
+    backgroundColor: "#4caf50",
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 999,
+    borderRadius: 12,
   },
-  trophy: { fontSize: 18, marginRight: 8 },
-  progressText: { fontWeight: '700', color: '#374151' },
-
-  main: {
-    flexDirection: 'row',
+  scoreIndicatorText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  progressBar: {
+    height: 6,
+    backgroundColor: "#e0e0e0",
+    borderRadius: 3,
+    marginBottom: 20,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    backgroundColor: "#4caf50",
+    borderRadius: 3,
+  },
+  imagePlaceholder: {
+    width: "100%",
+    height: 160,
+    backgroundColor: "#f0f9f0",
+    borderRadius: 16,
+    marginBottom: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#c8e6c9",
+    borderStyle: "dashed",
+  },
+  imageDescText: {
+    fontSize: 32,
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  imageLabel: {
+    fontSize: 14,
+    color: "#4caf50",
+    fontWeight: "600",
+  },
+  question: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#2e7d32",
+    marginBottom: 20,
+    lineHeight: 26,
+  },
+  optionsContainer: {
     gap: 12,
   },
-
-  availableBox: {
-    width: '38%',
-    padding: 12,
-    borderRadius: 18,
-    backgroundColor: '#f8fafc',
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-  },
-  availableHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  availableTitle: { fontWeight: '800', color: '#111827' },
-  count: { color: '#0ea5e9', fontWeight: '700' },
-  availableGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    justifyContent: 'center',
-  },
-  pieceTile: {
-    width: 60,
-    height: 60,
-    borderRadius: 12,
-    backgroundColor: '#e6f6ff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 6,
-  },
-  selectedPiece: {
-    borderWidth: 2,
-    borderColor: '#06b6d4',
-    transform: [{ scale: 1.05 }],
-  },
-  pieceEmoji: { fontSize: 28 },
-  button: {
-    marginTop: 10,
-    backgroundColor: '#f3f4f6',
-    paddingVertical: 10,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  buttonText: { fontWeight: '700' },
-  submitButton: { backgroundColor: '#10b981' },
-  submitButtonText: { color: '#fff' },
-  smallText: { textAlign: 'center', color: '#6b7280', marginTop: 6 },
-
-  categoriesBox: {
-    width: '62%',
-    paddingLeft: 12,
-  },
-  categoryCard: {
-    padding: 12,
-    borderRadius: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-  },
-  cardNeutral: { backgroundColor: '#f8fafc', borderColor: '#e5e7eb' },
-  cardComplete: { backgroundColor: '#ecfdf5', borderColor: '#34d399' },
-  cardWrong: { backgroundColor: '#fff1f2', borderColor: '#fca5a5' },
-
-  categoryHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  categoryIcon: { fontSize: 18, marginRight: 8 },
-  categoryTitle: { flex: 1, fontWeight: '800', color: '#111827' },
-  check: { marginLeft: 8 },
-  wrong: { color: '#dc2626', fontWeight: '700' },
-
-  slotRow: { flexDirection: 'row', justifyContent: 'space-between', gap: 8 },
-  slot: {
-    flex: 1,
-    height: 90,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 4,
-  },
-  slotEmpty: { backgroundColor: '#fff', borderWidth: 1, borderStyle: 'dashed', borderColor: '#d1d5db' },
-  slotFilled: { backgroundColor: '#e6fffa', borderWidth: 1, borderColor: '#c7f9ef' },
-
-  slotNumber: { color: '#c7c7c7', fontSize: 18, fontWeight: '800' },
-  pieceEmojiLarge: { fontSize: 36 },
-
-  messageBox: { marginTop: 10, padding: 8, backgroundColor: '#fff', borderRadius: 8, borderWidth: 1, borderColor: '#bbf7d0' },
-  messageText: { color: '#065f46', textAlign: 'center' },
-
-  celebration: {
-    alignItems: 'center',
+  option: {
+    backgroundColor: "#f1f8f4",
     padding: 16,
-    backgroundColor: '#ecfeff',
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#bbf7d0',
-    marginTop: 8,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#c8e6c9",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
-  award: { fontSize: 40 },
-  celebrationTitle: { fontSize: 18, fontWeight: '800', marginTop: 8 },
-  celebrationSubtitle: { color: '#374151', marginVertical: 8 },
-  tryAgain: { backgroundColor: '#10b981', marginTop: 8 },
-
-  hintBox: { padding: 10, backgroundColor: '#fffbeb', borderRadius: 12, borderWidth: 1, borderColor: '#fde68a', marginTop: 8 },
-  hintText: { color: '#92400e' },
+  correctOption: {
+    backgroundColor: "#c8e6c9",
+    borderColor: "#4caf50",
+  },
+  wrongOption: {
+    backgroundColor: "#ffcdd2",
+    borderColor: "#f44336",
+  },
+  disabledOption: {
+    opacity: 0.5,
+  },
+  optionContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  optionNumber: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#4caf50",
+    color: "#fff",
+    textAlign: "center",
+    lineHeight: 28,
+    fontWeight: "bold",
+    marginRight: 12,
+    fontSize: 14,
+  },
+  optionText: {
+    fontSize: 15,
+    color: "#1b5e20",
+    fontWeight: "500",
+    flex: 1,
+  },
+  checkmark: {
+    fontSize: 24,
+    color: "#4caf50",
+    fontWeight: "bold",
+  },
+  crossmark: {
+    fontSize: 24,
+    color: "#f44336",
+    fontWeight: "bold",
+  },
+  feedbackContainer: {
+    marginTop: 16,
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  correctFeedback: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#4caf50",
+  },
+  wrongFeedback: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#f44336",
+  },
+  scoreCard: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 32,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  emoji: {
+    fontSize: 72,
+    marginBottom: 16,
+  },
+  scoreTitle: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#2e7d32",
+    marginBottom: 16,
+  },
+  scoreText: {
+    fontSize: 20,
+    color: "#666",
+    marginBottom: 8,
+  },
+  percentage: {
+    fontSize: 56,
+    fontWeight: "bold",
+    color: "#4caf50",
+    marginBottom: 16,
+  },
+  message: {
+    fontSize: 18,
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 24,
+    paddingHorizontal: 20,
+  },
+  statsContainer: {
+    flexDirection: "row",
+    gap: 16,
+    marginBottom: 24,
+  },
+  statBox: {
+    backgroundColor: "#f1f8f4",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    minWidth: 100,
+  },
+  statNumber: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#4caf50",
+    marginBottom: 4,
+  },
+  wrongStat: {
+    color: "#f44336",
+  },
+  statLabel: {
+    fontSize: 14,
+    color: "#666",
+    fontWeight: "600",
+  },
+  restartButton: {
+    backgroundColor: "#4caf50",
+    paddingVertical: 16,
+    paddingHorizontal: 40,
+    borderRadius: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  restartButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
 });
+
+export default Quiz;
